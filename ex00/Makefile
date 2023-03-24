@@ -1,19 +1,32 @@
-NAME	= btc
+NAME		= btc
 
-CXX		= c++ -Wall -Wextra -Werror
+CXX			= c++
+CXXFLAGS	= -Wall -Wextra -Werror -std=c++98
 
-SRCS	= ./bitcoinexhange.cpp
+RM			= rm
+RMFLAGS		= -f
 
-INCLUDE	= ./
+INCLUDE		= ./
 
-RM		= rm -rf
+SRCS		= main.cpp \
+			  #BitcoinExchange.cpp
 
-all :
+OBJS		= $(SRCS:%.cpp=%.o)
 
-clean :
+all 		: $(NAME)
 
-fclean :
+$(NAME)		: $(OBJS)
+			$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
-re :
+%.o: %.cpp
+			$(CXX) $(CXXFLAGS) -c $< -o $(<:.cpp=.o)
+
+clean 		:
+			$(RM) $(RMFLAGS) $(OBJS)
+
+fclean 		: clean
+			$(RM) $(RMFLAGS) $(NAME)
+
+re 			: fclean all
 
 .PHONY : all clean fclean re

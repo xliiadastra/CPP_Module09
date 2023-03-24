@@ -1,10 +1,10 @@
-#include "bitcoinExchange.hpp"
+#include "BitcoinExchange.hpp"
 
 int	main(int argc, char* argv[])
 {
 	if (argc == 2)
 	{
-		ifstream ifs(argv[1]); // ios::app, ios::binary
+		std::ifstream ifs(argv[1]); // ios::app, ios::binary
 		if (!argv[1])
 		{
 			std::cerr << "Cannot open file " << std::endl;
