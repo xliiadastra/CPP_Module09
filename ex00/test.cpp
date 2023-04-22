@@ -21,8 +21,9 @@ int main() {
         std::getline(ss, value, ',');
         database[key] = value;
     }
-
-	for (std::map<std::string, std::string>::iterator it = database.begin(); it != database.end(); ++it)
-		std::cout << it->first << "    " << it->second << std::endl;
+    double t = 3.31;
+    std::cout << t << std::endl;
+	// for (std::map<std::string, std::string>::iterator it = database.begin(); it != database.end(); ++it)
+	// 	std::cout << it->first << "    " << it->second << std::endl;
     return 0;
 }
