@@ -32,7 +32,8 @@ int	main(int argc, char* argv[])
 
 		btc.makeDatabase();
 		btc.makeInputDatabase(argv[1]);
-		btc.run();
+//		btc.run();
+//		btc.test();
 	}
 	catch (std::string& msg)
 	{

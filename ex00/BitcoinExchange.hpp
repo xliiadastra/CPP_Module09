@@ -5,6 +5,7 @@
 # include <fstream>
 # include <string>
 # include <cstring>
+# include <algorithm>
 # include <map>
 # include <exception>
 # include <sstream>
@@ -28,15 +29,18 @@ public:
 
 	void	makeDatabase();
 	void	goSplit(const std::string& buf);
-	bool	isValidDate(const std::string& dateString);
+	bool	isValidDate(const std::string& key);
 	float	isValidFloat(const std::string& value);
 
 	void	makeInputDatabase(char* input);
 	void	goInputSplit(std::string& buf);
-	bool	isInputValidDate(const std::string& dateString);
+//	bool	isInputValidDate(const std::string& dateString);
 	float	isInputValidFloat(const std::string& value);
+	std::string	lowerDate(const std::string& input_key);
 
-	void	run();
+	void	run(const std::string& input_key, const float& input_value);
+	void	test();
+//	void	run(const std::string& input_key, const std::string& input_value);
 };
 
 #endif

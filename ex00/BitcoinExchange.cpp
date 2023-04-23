@@ -47,7 +47,7 @@ float	BitcoinExchange::isValidFloat(const std::string& value)
 
 	iss.str(value);
 	if (!(iss >> result) || !iss.eof())
-		throw std::string("Error: Is not float :" + value);
+		throw std::string("Error: Is not float :" + value + ".");
 
 	return result;
 }
@@ -83,7 +83,6 @@ void	BitcoinExchange::makeInputDatabase(char* input)
 		throw std::string("Error: input.txt: Failed to open file or does not exist in this directory.");
 
 	std::getline(this->ifs, check_header);
-//	std::cout << "./" + search << check_header << std::endl;
 	if (check_header != "date | value")
 		throw std::string("Error: input.txt: The header of the file must be 'date | value'." + check_header);
 	while (std::getline(ifs, buf))
@@ -92,34 +91,24 @@ void	BitcoinExchange::makeInputDatabase(char* input)
 
 void	BitcoinExchange::goInputSplit(std::string& buf)
 {
-	// std::stringstream	ss;
-	// std::string line;
-
-	size_t	pos = buf.find(" | ");
-	if (pos == std::string::npos)
+	try
 	{
-		std::cout << "Error: bad input => " + buf << std::endl;
-		return ;
-	}
+		size_t	pos = buf.find(" | ");
+		if (pos == std::string::npos)
+			throw std::string("Error: bad input => " + buf);
 
-	std::string	key = buf.substr(0, pos);
-	if (!isInputValidDate(key))
+		const std::string	input_key = buf.substr(0, pos);
+		if (!this->isValidDate(input_key))
+			throw std::string("Error: bad date data.");
+
+		const std::string	value = buf.substr(pos + 3);		
+		float input_value = this->isInputValidFloat(value);
+		this->run(input_key, input_value);
+	}
+	catch (std::string& msg)
 	{
-		std::cout << "Error: bad date data." << std::endl;
-		return ;
+		std::cerr << msg << std::endl;
 	}
-	std::string	value = buf.substr(pos + 3);
-	
-
-	// this->database[key] = this->isInputValidFloat(value);
-}
-
-bool BitcoinExchange::isInputValidDate(const std::string& key)
-{
-    struct tm tm;
-    char format[11] = "%Y-%m-%d";
-    char* result = strptime(key.c_str(), format, &tm);
-    return (result != nullptr && *result == '\0');
 }
 
 float	BitcoinExchange::isInputValidFloat(const std::string& value)
@@ -129,24 +118,38 @@ float	BitcoinExchange::isInputValidFloat(const std::string& value)
 
 	iss.str(value);
 	if (!(iss >> result) || !iss.eof())
-		std::string("Error: Is not float :" + value);
-	else if (result < 0.0f)
-		std::cout << "Error: not a positive number." << std::endl;
-	else if (result > 1000.0f)
-		std::cout << "Error: too large a number." << std::endl;
+		throw std::string("Error: Is not float : " + value + ".");
+	else if (result < 0.000000f)
+		throw std::string("Error: not a positive number.");
+	else if (result > 1000.000000f)
+		throw std::string("Error: too large a number.");
 
 	return result;
 }
 
-
-void	BitcoinExchange::run()
+void	BitcoinExchange::run(const std::string& input_key, const float& input_value)
 {
+	std::map<std::string, float>::iterator it = this->database.find(input_key);
 	
+	if (it != this->database.end())
+		std::cout << input_key << " => " << input_value << " = " << this->database[input_key] * input_value << std::endl;
+	else
+		std::cout << input_key << " => " << input_value << " = " << this->database[lowerDate(input_key)] * input_value << std::endl;
+}
 
+std::string BitcoinExchange::lowerDate(const std::string& input_key)
+{
+	std::map<std::string, float>::iterator it = this->database.lower_bound(input_key);
 
-	for (std::map<std::string, float>::iterator it = this->input_database.begin();
-		it != this->input_database.end(); ++it) {
-			std::cout << "1. " << it->first << " 2. " << it->second
+	--it;
+	return it->first;
+}
+
+void	BitcoinExchange::test()
+{
+	for (std::map<std::string, float>::iterator it = this->database.begin();
+		it != this->database.end(); ++it) {
+			std::cout << it->first << "," << it->second
 			<< std::endl;
 		}
 }
