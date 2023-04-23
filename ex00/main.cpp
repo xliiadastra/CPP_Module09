@@ -31,7 +31,7 @@ int	main(int argc, char* argv[])
 		BitcoinExchange btc;
 
 		btc.makeDatabase();
-		btc.makeInputDatabase(argv[1]);
+		btc.showU(argv[1]);
 //		btc.run();
 //		btc.test();
 	}
