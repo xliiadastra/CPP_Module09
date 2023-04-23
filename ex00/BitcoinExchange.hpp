@@ -9,13 +9,13 @@
 # include <exception>
 # include <sstream>
 # include <ctime>
+# include <iomanip>
 
 class BitcoinExchange {
 private:
-//	int 	m_fd;
-//	string	m_file_name;
 	std::ifstream	ifs;
-	std::map<std::string, double> database;
+	std::map<std::string, float> database;
+//	std::map<std::string, float> input_database;
 //	BitcoinExchange(BitcoinExchange& orig) { if (this != orig) m_file_name = orig->m_file_name; };
 //	BitcoinExchange&	operator=(const BitcoinExchange& orig) { this->database = orig.database; return (*this); };
 
@@ -24,15 +24,17 @@ public:
 //	BitcoinExchange(std::string file_name);
 	~BitcoinExchange();
 
-	std::map<std::string, double> getDatebase() const { return this->database; };
-	
+	std::map<std::string, float> getDatebase() const { return this->database; };
 
 	void	makeDatabase();
-	void	errorExit();
-	void	split(const std::string& buf);
-	double	is_float(const std::string& value);
-	void	validateData();
-	std::tm getDate(const std::string& date_str);
+	void	goSplit(const std::string& buf);
+	bool	isValidDate(const std::string& dateString);
+	float	isValidFloat(const std::string& value);
+
+	void	makeInputDatabase(char* input);
+	void	goInputSplit(std::string& buf);
+	bool	isInputValidDate(const std::string& dateString);
+	float	isInputValidFloat(const std::string& value);
 
 	void	run();
 };

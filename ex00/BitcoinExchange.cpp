@@ -6,7 +6,7 @@ BitcoinExchange::BitcoinExchange()
 
 	this->ifs.open("./data.csv");
 	if (!this->ifs.is_open()) 
-		throw std::string("Error: failed to open file");
+		throw std::string("Error: data.csv: Failed to open file or does not exist in this directory.");
 }
 
 //BitcoinExchange::BitcoinExchange(std::string m_file_name)
@@ -16,7 +16,7 @@ BitcoinExchange::BitcoinExchange()
 
 BitcoinExchange::~BitcoinExchange()
 {
-	if (this->ifs)
+	if (this->ifs.is_open())
 		this->ifs.close();
 }
 
@@ -27,86 +27,128 @@ void	BitcoinExchange::makeDatabase()
 
 	std::getline(this->ifs, check_header);
 	if (check_header != "date,exchange_rate")
-		throw std::string("Error: The header of the file must be 'data,exchange_rate'.");
+		throw std::string("Error: data.csv: The header of the file must be 'data,exchange_rate'." + check_header);
 	while (std::getline(ifs, buf))
-	{
-		// std::istringstream	ss;
-		// std::string key, value;
-		// getline(ss, key, ',');
-		// getline(ss, value, ',');
-		this->split(buf);
-		this->validateData();
-		// std::istringstream	data_stream(buf);
-		// // data_stream.str(buf);
-		// std::getline(data_stream, database, '\n');
-	}
+		this->goSplit(buf);
 }
 
-std::tm BitcoinExchange::getDate(const std::string& date_str)
+bool BitcoinExchange::isValidDate(const std::string& key)
 {
-    std::tm date_tm = {};
-    std::istringstream validate(date_str);
-    
-	validate >> std::get_time(&date_tm, "%Y-%m-%d");
-	if (validate.fail())
-		throw std::string("Error: Not a valid date.");
-
-	return date_tm;
+    struct tm tm;
+    char format[11] = "%Y-%m-%d";
+    char* result = strptime(key.c_str(), format, &tm);
+    return (result != nullptr && *result == '\0');
 }
 
-void	BitcoinExchange::validateData()
+float	BitcoinExchange::isValidFloat(const std::string& value)
 {
-	std::istringstream	validate;
-	std::map<std::string, double>::iterator it;
-	// std::tm	data_tm = {};
+	std::stringstream	iss;
+	float	result;
 
-	it = this->database.end();
-	std::tm date_tm1 = this->getDate((--it)->first);
-	if (this->database.size() == 1)
-		return ;
-	std::tm date_tm2 = this->getDate((--it)->first);
-	if (std::difftime(std::mktime(&date_tm1), std::mktime(&date_tm2)) < 0)
-		throw std::string("Error: data.csv: Dates are not sorted." + it->first + " " + (++it)->first);
-	
+	iss.str(value);
+	if (!(iss >> result) || !iss.eof())
+		throw std::string("Error: Is not float :" + value);
 
-}
-
-double	BitcoinExchange::is_float(const std::string& value)
-{
-	char*	endptr;
-	double	result = 0.00;
-
-	result = std::strtod(value.c_str(), &endptr);
-	std::cout << value << " " << result << std::endl;
-	if (!(endptr != value.c_str() && *endptr == '\0'))
-		throw std::string("Error: data.csv: Is not float");
 	return result;
 }
 
-void	BitcoinExchange::split(const std::string& buf)
+void	BitcoinExchange::goSplit(const std::string& buf)
 {
 	std::stringstream	ss;
 	std::string key, value;
 
 	ss.str(buf);
 	std::getline(ss, key, ',');
+	if (!isValidDate(key))
+ 		throw std::string("Error: Is not Date :" + key);
+
 	std::getline(ss, value, ',');
 	if (std::getline(ss, key, ','))
-		throw std::string("Error: Too many columns");
+		throw std::string("Error: Too many columns :" + key);
 	else
-		this->database[key] = this->is_float(value);
+		this->database[key] = this->isValidFloat(value);
 }
+
+void	BitcoinExchange::makeInputDatabase(char* input)
+{
+	std::string	check_header;
+	std::string	buf;
+
+	if (this->ifs.is_open())
+		this->ifs.close();
+
+	std::string	search = input;
+	this->ifs.open("./" + search);
+	if (!this->ifs.is_open())
+		throw std::string("Error: input.txt: Failed to open file or does not exist in this directory.");
+
+	std::getline(this->ifs, check_header);
+//	std::cout << "./" + search << check_header << std::endl;
+	if (check_header != "date | value")
+		throw std::string("Error: input.txt: The header of the file must be 'date | value'." + check_header);
+	while (std::getline(ifs, buf))
+		this->goInputSplit(buf);
+}
+
+void	BitcoinExchange::goInputSplit(std::string& buf)
+{
+	// std::stringstream	ss;
+	// std::string line;
+
+	size_t	pos = buf.find(" | ");
+	if (pos == std::string::npos)
+	{
+		std::cout << "Error: bad input => " + buf << std::endl;
+		return ;
+	}
+
+	std::string	key = buf.substr(0, pos);
+	if (!isInputValidDate(key))
+	{
+		std::cout << "Error: bad date data." << std::endl;
+		return ;
+	}
+	std::string	value = buf.substr(pos + 3);
+	
+
+	// this->database[key] = this->isInputValidFloat(value);
+}
+
+bool BitcoinExchange::isInputValidDate(const std::string& key)
+{
+    struct tm tm;
+    char format[11] = "%Y-%m-%d";
+    char* result = strptime(key.c_str(), format, &tm);
+    return (result != nullptr && *result == '\0');
+}
+
+float	BitcoinExchange::isInputValidFloat(const std::string& value)
+{
+	std::stringstream	iss;
+	float	result;
+
+	iss.str(value);
+	if (!(iss >> result) || !iss.eof())
+		std::string("Error: Is not float :" + value);
+	else if (result < 0.0f)
+		std::cout << "Error: not a positive number." << std::endl;
+	else if (result > 1000.0f)
+		std::cout << "Error: too large a number." << std::endl;
+	else
+
+
+	return result;
+}
+
 
 void	BitcoinExchange::run()
 {
-	// for (std::map<std::string, double>::iterator it = this->database.begin();
-	// 	it != this->database.end(); ++it) {
-	// 		std::cout << "1. " << it->first << " 2. " << it->second << std::endl;
-	// 	}
-}
+	
 
-void	BitcoinExchange::errorExit()
-{
-	throw std::string("Error!");
-	this->ifs.close();
+
+	for (std::map<std::string, float>::iterator it = this->input_database.begin();
+		it != this->input_database.end(); ++it) {
+			std::cout << "1. " << it->first << " 2. " << it->second
+			<< std::endl;
+		}
 }
