@@ -69,7 +69,7 @@ void	BitcoinExchange::goSplit(const std::string& buf)
 		this->database[key] = this->isValidFloat(value);
 }
 
-void	BitcoinExchange::makeInputDatabase(char* input)
+void	BitcoinExchange::showU(char* input)
 {
 	std::string	check_header;
 	std::string	buf;
