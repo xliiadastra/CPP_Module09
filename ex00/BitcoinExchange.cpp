@@ -43,7 +43,7 @@ bool BitcoinExchange::isValidDate(const std::string& key)
 float	BitcoinExchange::isValidFloat(const std::string& value)
 {
 	std::stringstream	iss;
-	float	result;
+	float	result = 0.0f;
 
 	iss.str(value);
 	if (!(iss >> result) || !iss.eof())
@@ -134,8 +134,6 @@ float	BitcoinExchange::isInputValidFloat(const std::string& value)
 		std::cout << "Error: not a positive number." << std::endl;
 	else if (result > 1000.0f)
 		std::cout << "Error: too large a number." << std::endl;
-	else
-
 
 	return result;
 }
