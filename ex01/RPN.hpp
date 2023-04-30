@@ -3,22 +3,24 @@
 
 # include <iostream>
 # include <string>
+# include <cctype>
 # include <stack>
 # include <iterator>
 
 class Rpn
 {
 private:
-    std::string   input;
-    std::stack<int>     calculator;
+    std::string     input;
+    std::stack<int> number;
 
+    std::string ft_trim(std::string str);
 public:
     Rpn();
     Rpn(Rpn& orig);
     Rpn& operator=(const Rpn& orig);
     ~Rpn();
 
-    void    validArgv(const int argc, const char* argv[]);
+    void    validArgv(int argc, char* argv[]);
     void    goStack();
     void    run();
 };
