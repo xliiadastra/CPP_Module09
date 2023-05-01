@@ -55,7 +55,7 @@ void Rpn::validArgv(int argc, char* argv[])
         std::string valid_string = "0123456789+-/* ";
         std::size_t pos = str.find_first_not_of(valid_string);
         if (pos != std::string::npos)
-            throw std::string("Error: '" + str + "' Bad Input.. just number & four arithmetic operations");
+            throw std::string("Error: '" + str + "' Bad Input.. just integer & four arithmetic operations");
         else
             this->input = this->ft_trim(str);
     }
@@ -73,9 +73,9 @@ void Rpn::goStack(void)
         {
             if (this->number.size() < 2)
                 throw std::string("Error: It is not reverse Polish notation.");
-            int a = this->number.top();
+            float a = this->number.top();
             this->number.pop();
-            int b = this->number.top();
+            float b = this->number.top();
             this->number.pop();
             if (b == 0 && this->input[i] == '/')
                 throw std::string("NaN");

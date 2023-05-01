@@ -11,7 +11,7 @@ class Rpn
 {
 private:
     std::string     input;
-    std::stack<int> number;
+    std::stack<float> number;
 
     std::string ft_trim(std::string str);
 public:
