@@ -77,7 +77,7 @@ void Rpn::goStack(void)
             this->number.pop();
             float b = this->number.top();
             this->number.pop();
-            if (b == 0 && this->input[i] == '/')
+            if (a == 0 && this->input[i] == '/')
                 throw std::string("NaN");
             if (this->input[i] == '+')
                 this->number.push(b + a);
