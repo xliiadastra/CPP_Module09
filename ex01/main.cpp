@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::string msg)
     {
-        std::cout << msg << std::endl;
+        std::cerr << msg << std::endl;
     }
     return 0;
 }
