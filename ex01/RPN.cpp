@@ -47,7 +47,7 @@ std::string Rpn::ft_trim(std::string str)
 void Rpn::validArgv(int argc, char* argv[])
 {
     if (argc != 2)
-        throw std::string("Error: Bad Input..\nex)\n./RPN \"1 2 + 3 4 +*\"");
+        throw std::string("Error: Bad Input..\nex) ./RPN \"1 2 + 3 4 +*\"");
     else
     {
         std::string str = argv[1];
@@ -82,11 +82,11 @@ void Rpn::goStack(void)
             if (this->input[i] == '+')
                 this->number.push(b + a);
             else if (this->input[i] == '-')
-                this->number.push(b - a);           
+                this->number.push(b - a);
             else if (this->input[i] == '/') // 생각해보니 float 써야 나누셈 받을 수 있지 않음?ㅋ
                 this->number.push(b / a);
             else if (this->input[i] == '*')
-                this->number.push(b * a);            
+                this->number.push(b * a);
             else
                 throw std::string("Error: It is not reverse Polish notation.");
         }
