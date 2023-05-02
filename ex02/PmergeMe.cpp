@@ -19,8 +19,14 @@ void PmergeMe::validInput(int argc, char*& argv)
         if (pos != std::string::npos)
             throw IsNotIntegerException();
         else
-            while ()
-                this->sort.push_back(스플릿기준으로 number 넣기);
+        {
+            std::stringstream ss(argv);
+            int tmp = 0;
+            while (ss >> tmp)
+                this->sort.push_back(tmp);
+            // for (std::size_t i = 0; i < this->sort.size(); ++i)
+            //     std::cout << this->sort[i] << std::endl;
+        }
     }
 }
 
@@ -33,3 +39,19 @@ const char* PmergeMe::IsNotIntegerException::what (void) const throw()
 {
     return "Error: Only positive integers that need to be sorted are accepted.";
 }
+
+// std::vector<int> PmergeMe::goSplit(std::string str, char dlim)
+// {
+//     std::vector<int> result;
+//     std::stringstream ss;
+//     std::string buf;
+
+//     ss.str(str);
+//     while (std::getline(ss, buf, dlim))
+//     {
+//         int tmp = 0;
+//         buf >> tmp;
+        
+//     }
+    
+// }

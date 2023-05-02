@@ -3,6 +3,7 @@
 
 # include <iostream>
 # include <string>
+# include <sstream>
 # include <vector>
 # include <algorithm>
 # include <exception>
@@ -10,6 +11,7 @@
 class PmergeMe
 {
 private:
+    std::vector<int>    sort;
 
     PmergeMe(PmergeMe& orig);
     PmergeMe& operator=(PmergeMe& orig);
@@ -17,8 +19,9 @@ private:
 public:
     PmergeMe();
     ~PmergeMe();
-    void validInput(int argc, char*& argv);
 
+    void validInput(int argc, char*& argv);
+    // std::vector<int> goSplit(std::string str, char dlim);
 
 
 
