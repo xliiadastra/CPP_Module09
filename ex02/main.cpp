@@ -5,8 +5,10 @@ int main(int argc, char* argv[])
     try
     {
         PmergeMe pmergeme;
+        // (void)argc;
+        pmergeme.validInput(argc, argv);
 
-        pmergeme.validInput(argc, argv[1]);
+        pmergeme.showU();
     }
     catch (const std::exception& e)
     {
