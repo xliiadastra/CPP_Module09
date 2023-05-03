@@ -67,7 +67,7 @@ void Rpn::goStack(void)
     {
         if (this->input[i] == ' ')
             continue;
-        else if (std::isdigit(this->input[i]))
+        else if (std::isdigit(this->input[i]) && this->input[i + 1] == ' ')
             this->number.push(input[i] - '0');
         else
         {
@@ -91,6 +91,8 @@ void Rpn::goStack(void)
                 throw std::string("Error: It is not reverse Polish notation.");
         }
     }
+    if (this->number.size() != 1)
+        throw std::string("Error: It is not reverse Polish notation.");
     std::cout << this->number.top() << std::endl;
 }
 
