@@ -23,6 +23,8 @@ std::string Rpn::ft_trim(std::string str)
 //    std::size_t pos = str.find_first_not_of(valid_string);
 //    int num_fl = 0;
 
+    // if (str == "")
+    //     throw 
     str.erase(0, str.find_first_not_of(valid_string));
     while (std::isspace(str.back()))
         str.erase(str.find_last_not_of(valid_string) + 1, str.length() - 1);
