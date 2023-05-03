@@ -37,7 +37,7 @@ bool BitcoinExchange::isValidDate(const std::string& key)
     struct tm tm;
     char format[11] = "%Y-%m-%d";
     char* result = strptime(key.c_str(), format, &tm);
-    return (result != nullptr && *result == '\0');
+    return (result != NULL && *result == '\0');
 }
 
 float	BitcoinExchange::isValidFloat(const std::string& value)
