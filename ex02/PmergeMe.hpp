@@ -7,6 +7,7 @@
 # include <string>
 # include <sstream>
 # include <vector>
+# include <list>
 # include <iterator>
 # include <algorithm>
 # include <exception>
@@ -16,8 +17,10 @@ class PmergeMe
 private:
     int size;
 
-    std::vector<int>    sort;
-    std::vector<int>    sort_buf;
+    std::vector<int>    v_sort;
+    std::vector<int>    v_buf;
+
+    std::list<int>      l_sort;
 
     std::vector<double> time_to_clock;
 
@@ -30,8 +33,13 @@ public:
 
     void validInput(int argc, char**& argv);
 
-    void mergeSortVector(int m, int middle, int n);
-    void mergeSort(int m, int n);
+    void goMergeSortVector(int m, int middle, int n);
+    void mergeSortVector(int m, int n);
+
+    void goMergeSortList(std::list<int>& list, std::list<int>& left_half, std::list<int>& right_half);
+    void mergeSortList(std::list<int>& list);
+    std::list<int>::iterator getMiddleList(std::list<int>& list);
+    void readyMergeSortList();
 
     std::string ft_trim(std::string str);
 

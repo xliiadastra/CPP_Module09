@@ -12,7 +12,7 @@ void PmergeMe::validInput(int argc, char**& argv)
 {
     char** ptr = argv + 1;
     int i = 0;
-    this->sort.reserve(size);
+    this->v_sort.reserve(size);
     while (++i < argc)
     {
         std::string valid_string = *ptr;
@@ -26,14 +26,17 @@ void PmergeMe::validInput(int argc, char**& argv)
             if (!(ss >> tmp))
                 throw IntOverFlowException();
             else
-                this->sort.push_back(tmp);
+            {
+                this->v_sort.push_back(tmp);
+                this->l_sort.push_back(tmp);
+            }
         }
         ++ptr;
     }
-    this->sort_buf.reserve(size);
+    this->v_buf.reserve(size);
 }
 
-void PmergeMe::mergeSortVector(int m, int middle, int n)
+void PmergeMe::goMergeSortVector(int m, int middle, int n)
 {
     int i = m;
     int j = middle + 1;
@@ -41,38 +44,91 @@ void PmergeMe::mergeSortVector(int m, int middle, int n)
 
     while (i <= middle && j <= n)
     {
-        if (this->sort[i] <= this->sort[j])
-            this->sort_buf[k++] = this->sort[i++];
+        if (this->v_sort[i] <= this->v_sort[j])
+            this->v_buf[k++] = this->v_sort[i++];
         else
-            this->sort_buf[k++] = this->sort[j++];
+            this->v_buf[k++] = this->v_sort[j++];
     }
 
     if (i > middle)
         for (int t = j; t <= n; ++t)
-            this->sort_buf[k++] = this->sort[t];
+            this->v_buf[k++] = this->v_sort[t];
     else
         for (int t = i; t <= middle; ++t)
-            this->sort_buf[k++] = this->sort[t];
+            this->v_buf[k++] = this->v_sort[t];
 
     for (int t = m; t <= n; ++t)
-        this->sort[t] = this->sort_buf[t];
+        this->v_sort[t] = this->v_buf[t];
 }
 
-void PmergeMe::mergeSort(int m, int n)
+void PmergeMe::mergeSortVector(int m, int n)
 {
     if (m < n)
     {
         int middle = (m + n) / 2;
-        mergeSort(m, middle);
-        mergeSort(middle + 1, n);
-        mergeSortVector(m, middle, n);
+        mergeSortVector(m, middle);
+        mergeSortVector(middle + 1, n);
+        goMergeSortVector(m, middle, n);
+    }    
+}
+
+void PmergeMe::goMergeSortList(std::list<int>& list, std::list<int>& left_half, std::list<int>& right_half)
+{
+    std::list<int>::iterator left = left_half.begin();
+    std::list<int>::iterator right = right_half.begin();
+
+    while (left != left_half.end() && right != right_half.end())
+    {
+        if (*left <= *right) {
+            list.splice(list.end(), left_half, left++);
+        } else {
+            list.splice(list.end(), right_half, right++);
+        }
     }
-    
+
+    while (left != left_half.end())
+        list.splice(list.end(), left_half, left++);
+
+    while (right != right_half.end())
+        list.splice(list.end(), right_half, right++);
+}
+
+void PmergeMe::mergeSortList(std::list<int>& list)
+{
+    if (list.size() > 1)
+    {
+        std::list<int> left_half, right_half;
+        std::list<int>::iterator middle = this->getMiddleList(list);
+        left_half.splice(left_half.end(), list, list.begin(), middle);
+        right_half.splice(right_half.end(), list, middle, list.end());
+        mergeSortList(left_half);
+        mergeSortList(right_half);
+
+        goMergeSortList(list, left_half, right_half);
+    }
+}
+
+std::list<int>::iterator PmergeMe::getMiddleList(std::list<int>& list)
+{
+    std::list<int>::iterator slow = list.begin();
+    std::list<int>::iterator fast = list.begin();
+
+    while (fast != list.end() && ++fast != list.end())
+    {
+        ++fast;
+        ++slow;
+    }
+    return slow;
+}
+
+void PmergeMe::readyMergeSortList()
+{
+    this->mergeSortList(this->l_sort);
 }
 
 void PmergeMe::showU(char ** argv)
 {
-    std::cout << "Before : ";
+    std::cout << "Before Input : ";
     for (int i = 0; i < this->getSize(); ++i)
     {
         if (i == (this->getSize() - 1))
@@ -82,21 +138,30 @@ void PmergeMe::showU(char ** argv)
     }
     std::cout << std::endl;
 
-    std::cout << "After :  ";
-    for (std::vector<int>::const_iterator it = this->sort.begin(); it != sort.end(); ++it)
+    std::cout << "After Vector : ";
+    for (std::vector<int>::const_iterator it = this->v_sort.begin(); it != v_sort.end(); ++it)
     {
-        if (it == (sort.end() - 1))
+        if (it == (v_sort.end() - 1))
             std::cout << *it;
         else
             std::cout << *it << " ";
     }
     std::cout << std::endl;
 
-    std::cout << "Time to process a range of " << this->sort.size()
+    std::cout << "After List   : ";
+    for (std::list<int>::const_iterator it = this->l_sort.begin(); it != l_sort.end(); ++it)
+    {
+        if (it == (--(this->l_sort.end())))
+            std::cout << *it;
+        else
+            std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Time to process a range of " << this->v_sort.size()
               << " elements with std::vector<int> : " << this->time_to_clock.front() << " us" << std::endl;
-    // std::cout << "Time to process a range of " << this->sort.size()
-    //           << " elements with std::list : " << 0.00031 << " us" << std::endl;
-    // std::cout << sort.size() << " " << sort.size() << std::endl;
+    std::cout << "Time to process a range of " << this->l_sort.size()
+              << " elements with std::list<int> : " << this->time_to_clock.back() << " us" << std::endl;
 }
 
 std::string PmergeMe::ft_trim(std::string str)
