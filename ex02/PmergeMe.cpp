@@ -139,7 +139,7 @@ void PmergeMe::showU(char ** argv)
     std::cout << std::endl;
 
     std::cout << "After Vector : ";
-    for (std::vector<int>::const_iterator it = this->v_sort.begin(); it != v_sort.end(); ++it)
+    for (std::vector<int>::const_iterator it = this->v_sort.begin(); it != this->v_sort.end(); ++it)
     {
         if (it == (v_sort.end() - 1))
             std::cout << *it;
@@ -149,7 +149,7 @@ void PmergeMe::showU(char ** argv)
     std::cout << std::endl;
 
     std::cout << "After List   : ";
-    for (std::list<int>::const_iterator it = this->l_sort.begin(); it != l_sort.end(); ++it)
+    for (std::list<int>::const_iterator it = this->l_sort.begin(); it != this->l_sort.end(); ++it)
     {
         if (it == (--(this->l_sort.end())))
             std::cout << *it;
