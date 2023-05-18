@@ -1,15 +1,9 @@
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe()
-{
-}
-
-PmergeMe::~PmergeMe()
-{
-}
-
 void PmergeMe::validInput(int argc, char**& argv)
 {
+    if (argc < 2)
+        throw InputArgvException();
     char** ptr = argv + 1;
     int i = 0;
     this->v_sort.reserve(size);
@@ -61,8 +55,29 @@ void PmergeMe::goMergeSortVector(int m, int middle, int n)
         this->v_sort[t] = this->v_buf[t];
 }
 
+void PmergeMe::insertionSort(int left, int right)
+{
+    for (int i = left + 1; i <= right; ++i)
+    {
+        int key = this->v_sort[i];
+        int j = i - 1;
+        while (j >= left && this->v_sort[j] > key)
+        {
+            this->v_sort[j + 1] = this->v_sort[j];
+            j--;
+        }
+        this->v_sort[j + 1] = key;
+    }
+}
+
 void PmergeMe::mergeSortVector(int m, int n)
 {
+    if (n - m + 1 <= this->insertion)
+    {
+        this->insertionSort(m, n);
+        return ;
+    }
+
     if (m < n)
     {
         int middle = (m + n) / 2;
@@ -93,10 +108,37 @@ void PmergeMe::goMergeSortList(std::list<int>& list, std::list<int>& left_half, 
         list.splice(list.end(), right_half, right++);
 }
 
+void PmergeMe::insertionSortList(std::list<int>& list)
+{
+    if (list.empty())
+        return;
+
+    std::list<int>::iterator it1 = list.begin();
+    ++it1;
+    for (; it1 != list.end(); ++it1)
+    {
+        std::list<int>::iterator it2 = it1;
+        std::list<int>::iterator prev = it2;
+        --prev;
+        int key = *it1;
+        while (it2 != list.begin() && *prev > key)
+        {
+            *it2 = *prev;
+            --it2;
+            --prev;
+        }
+        *it2 = key;
+    }
+}
 void PmergeMe::mergeSortList(std::list<int>& list)
 {
     if (list.size() > 1)
     {
+        if (list.size() <= static_cast<size_t>(this->insertion))
+        {
+            insertionSortList(list);
+            return;
+        }
         std::list<int> left_half, right_half;
         std::list<int>::iterator middle = this->getMiddleList(list);
         left_half.splice(left_half.end(), list, list.begin(), middle);
@@ -168,8 +210,8 @@ std::string PmergeMe::ft_trim(std::string str)
 {
     std::string valid_string = " ";
 
-    // if (str == "")
-    //     throw
+    if (str == "")
+        return str;
     str.erase(0, str.find_first_not_of(valid_string));
     while (std::isspace(str.back()))
         str.erase(str.find_last_not_of(valid_string) + 1, str.length() - 1);
@@ -183,10 +225,9 @@ void PmergeMe::setClock(clock_t& start, clock_t& end)
     this->time_to_clock.push_back(time * 1000000.0);
 }
 
-
-const char* PmergeMe::TooManyArgvException::what (void) const throw()
+const char* PmergeMe::InputArgvException::what (void) const throw()
 {
-    return "Error: Too many argument.\n ex) ./PmergeMe \"3 5 9 7 4\"";
+    return "Error: Input argument.\n ex) ./PmergeMe 3 5 9 7 4";
 }
 
 const char* PmergeMe::IntOverFlowException::what (void) const throw()

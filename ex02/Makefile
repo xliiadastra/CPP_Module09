@@ -24,9 +24,12 @@ $(NAME)		: $(OBJS)
 clean		:
 			$(RM) $(RMFLAGS) $(OBJS)
 
-fclean		: clean
+fclean 		: 
+			$(MAKE) clean
 			$(RM) $(RMFLAGS) $(NAME)
 
-re			: fclean all
+re 			: 
+			$(MAKE) fclean
+			$(MAKE) all
 
 .PHONY		: all clean fclean re

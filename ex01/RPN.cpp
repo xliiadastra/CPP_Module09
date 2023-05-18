@@ -2,17 +2,6 @@
 
 Rpn::Rpn() : input("") {}
 
-Rpn::Rpn(Rpn& orig)
-{
-    (void)orig;
-}
-
-Rpn& Rpn::operator=(const Rpn& orig)
-{
-    (void)orig;
-    return *this;
-}
-
 Rpn::~Rpn()
 {
 }
@@ -23,8 +12,8 @@ std::string Rpn::ft_trim(std::string str)
 //    std::size_t pos = str.find_first_not_of(valid_string);
 //    int num_fl = 0;
 
-    // if (str == "")
-    //     throw 
+    if (str == "")
+        return str;
     str.erase(0, str.find_first_not_of(valid_string));
     while (std::isspace(str.back()))
         str.erase(str.find_last_not_of(valid_string) + 1, str.length() - 1);
@@ -69,7 +58,7 @@ void Rpn::goStack(void)
     {
         if (this->input[i] == ' ')
             continue;
-        else if (std::isdigit(this->input[i]) && this->input[i + 1] == ' ')
+        else if (std::isdigit(this->input[i]))
             this->number.push(input[i] - '0');
         else
         {
@@ -85,7 +74,7 @@ void Rpn::goStack(void)
                 this->number.push(b + a);
             else if (this->input[i] == '-')
                 this->number.push(b - a);
-            else if (this->input[i] == '/') // 생각해보니 float 써야 나누셈 받을 수 있지 않음?ㅋ
+            else if (this->input[i] == '/')
                 this->number.push(b / a);
             else if (this->input[i] == '*')
                 this->number.push(b * a);
@@ -96,8 +85,4 @@ void Rpn::goStack(void)
     if (this->number.size() != 1)
         throw std::string("Error: It is not reverse Polish notation.");
     std::cout << this->number.top() << std::endl;
-}
-
-void Rpn::run()
-{
 }

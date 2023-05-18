@@ -13,16 +13,16 @@ private:
     std::string     input;
     std::stack<float> number;
 
+    Rpn(const Rpn& orig) { *this = orig; };
+    Rpn& operator=(const Rpn& orig) { if (this != &orig) this->input = orig.input; return *this; };
     std::string ft_trim(std::string str);
+
 public:
     Rpn();
-    Rpn(Rpn& orig);
-    Rpn& operator=(const Rpn& orig);
     ~Rpn();
 
     void    validArgv(int argc, char* argv[]);
     void    goStack();
-    void    run();
 };
 
 #endif

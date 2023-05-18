@@ -17,7 +17,7 @@ private:
 	std::ifstream	ifs;
 	std::map<std::string, float> database;
 
-	BitcoinExchange(const BitcoinExchange& orig) { *this = orig; };
+	BitcoinExchange(const BitcoinExchange& orig){ *this = orig; };
 	BitcoinExchange&	operator=(const BitcoinExchange& orig) { if (this != &orig) this->database = orig.database; return (*this); };
 
 public:
@@ -38,7 +38,7 @@ public:
 	std::string	lowerDate(const std::string& input_key);
 
 	void	run(const std::string& input_key, const float& input_value);
-	void	test();
+	// void	test();
 //	void	run(const std::string& input_key, const std::string& input_value);
 };
 

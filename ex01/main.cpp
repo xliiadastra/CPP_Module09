@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
         
         rpn.validArgv(argc, argv);
         rpn.goStack();
-//        rpn.run();
     }
     catch (const std::string msg)
     {

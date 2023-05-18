@@ -9,11 +9,6 @@ BitcoinExchange::BitcoinExchange()
 		throw std::string("Error: data.csv: Failed to open file or does not exist in this directory.");
 }
 
-//BitcoinExchange::BitcoinExchange(std::string m_file_name)
-//{
-	// 'file_name.csv' file open -> input database
-//}
-
 BitcoinExchange::~BitcoinExchange()
 {
 	if (this->ifs.is_open())
@@ -37,7 +32,38 @@ bool BitcoinExchange::isValidDate(const std::string& key)
     struct tm tm;
     char format[11] = "%Y-%m-%d";
     char* result = strptime(key.c_str(), format, &tm);
-    return (result != NULL && *result == '\0');
+	if (result == NULL || *result != '\0')
+        return false;
+    int year = tm.tm_year + 1900;
+    int month = tm.tm_mon + 1;
+    int day = tm.tm_mday;
+    if (month < 1 || month > 12 || day < 1)
+        return false;
+    if (month == 2)
+    {
+        if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+        {
+            if (day > 29)
+                return false;
+        }
+        else
+        {
+            if (day > 28)
+                return false;
+        }
+    }
+    else if (month == 4 || month == 6 || month == 9 || month == 11)
+    {
+        if (day > 30)
+            return false;
+    }
+    else
+    {
+        if (day > 31)
+            return false;
+    }
+
+    return true;
 }
 
 float	BitcoinExchange::isValidFloat(const std::string& value)
@@ -101,7 +127,7 @@ void	BitcoinExchange::goInputSplit(std::string& buf)
 		if (!this->isValidDate(input_key))
 			throw std::string("Error: bad date data.");
 
-		const std::string	value = buf.substr(pos + 3);		
+		const std::string	value = buf.substr(pos + 3);
 		float input_value = this->isInputValidFloat(value);
 		this->run(input_key, input_value);
 	}
@@ -119,37 +145,38 @@ float	BitcoinExchange::isInputValidFloat(const std::string& value)
 	iss.str(value);
 	if (!(iss >> result) || !iss.eof())
 		throw std::string("Error: Is not float : " + value + ".");
-	else if (result < 0.000000f)
-		throw std::string("Error: not a positive number.");
-	else if (result > 1000.000000f)
-		throw std::string("Error: too large a number.");
-
+	else if (!(result > 0.000000f && result < 1000.000000f))
+		throw std::string("Error: A valid value must be either a float or a positive integer between 0 and 1000.");
 	return result;
 }
 
 void	BitcoinExchange::run(const std::string& input_key, const float& input_value)
 {
 	std::map<std::string, float>::iterator it = this->database.find(input_key);
-	
+
 	if (it != this->database.end())
 		std::cout << input_key << " => " << input_value << " = " << this->database[input_key] * input_value << std::endl;
-	else
-		std::cout << input_key << " => " << input_value << " = " << this->database[lowerDate(input_key)] * input_value << std::endl;
+	else {
+		std::string valid = lowerDate(input_key);
+		std::cout << input_key << " => " << input_value << " = " << this->database[valid] * input_value << std::endl;
+	}
 }
 
 std::string BitcoinExchange::lowerDate(const std::string& input_key)
 {
 	std::map<std::string, float>::iterator it = this->database.lower_bound(input_key);
 
+	if (it == this->database.begin() || it == this->database.end())
+		throw std::string("Error: The dates you entered are invalid, please enter after the first date and before the last date.");
 	--it;
 	return it->first;
 }
 
-void	BitcoinExchange::test()
-{
-	for (std::map<std::string, float>::iterator it = this->database.begin();
-		it != this->database.end(); ++it) {
-			std::cout << it->first << "," << it->second
-			<< std::endl;
-		}
-}
+// void	BitcoinExchange::test()
+// {
+// 	for (std::map<std::string, float>::iterator it = this->database.begin();
+// 		it != this->database.end(); ++it) {
+// 			std::cout << it->first << "," << it->second
+// 			<< std::endl;
+// 		}
+// }
